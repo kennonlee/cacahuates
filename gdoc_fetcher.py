@@ -7,27 +7,20 @@ import gdata.spreadsheet.service
 import gdata.spreadsheet.text_db
                                                        
 class GdocFetcher():
-    def run(self, from_date=None, to_date=None):
-        self.get_entries(from_date, to_date)
 
-    def get_entries(self, from_date=None, to_date=None):                
+    def __init__(self, email, password):
+        self.email = email
+        self.password = password
+
+    def run(self):
+        print self.get_entries()
+
+    def get_entries(self):                
         """
-	    Sample code to fetch data from a Google Spreadsheet using a query and a sort, followed
-	    by example of how to get the data out by column name.
-	
-	    This code assumes you have a spreadsheet that looks something like this:
-	
-	    Timestamp  		|	First Name	|	Last Name
-	    8/16/2010 12:15:00  |	Michael		|	Woof
-	    8/17/2010 14:25:35	|	John		|	Doe          
-	
-	    Google Spreadsheets normalizes the column names for the purposes of the API by stripping 
-            all non-alphanumerics and lower-casing,
-	    hence the column names used in the code as "timestamp", "firstname", and "lastname".
 	"""
         gd_client = gdata.spreadsheet.service.SpreadsheetsService()
-        gd_client.email = 'kennonator@gmail.com'
-        gd_client.password = 'gobbledygook'
+        gd_client.email = self.email
+        gd_client.password = self.password
         gd_client.source = 'YOUR_APP_NAME'
 
         try:                    
@@ -42,9 +35,9 @@ class GdocFetcher():
         
         q = gdata.spreadsheet.service.CellQuery()
         q['min-col'] = '2'
-        q['max-col'] = '2'
+        q['max-col'] = '3'
         q['min-row'] = '2'
-        q['max-row'] = '3'
+        q['max-row'] = '20'
 
         try:
             feed = gd_client.GetCellsFeed(key, query=q)            
@@ -55,12 +48,30 @@ class GdocFetcher():
             logging.error('Spreadsheet socket.sslerror: ' + str(e))
             return False
         
-        # Iterate over the rows
+        # Iterate over the rows 
+        name_indices = {}
+        rankings = {}
         for row_entry in feed.entry:
-            print row_entry.ToString()
-	    # to get the column data out, you use the text_db.Record class, then use the dict record.content
-#            record = gdata.spreadsheet.text_db.Record(row_entry=row_entry)
-#            print record
+            cell = row_entry.cell 
+            cell_row = int(cell.row)
+            cell_col = int(cell.col)
+            cell_text = cell.text
+
+            # this cell is someone's name. Make a new dict entry for them.
+            if cell_row == 2:
+                name_indices[cell_col] = cell_text
+                rankings[cell_text] = []
+            else:
+                ranking = rankings[name_indices[cell_col]]
+                ranking.append(cell_text)
+        return rankings
+
+    # Throws an error if the given rankings are invalid-- that is, if:
+    # - the list is too short 
+    # - the list is too long
+    # - the chosen cities dont match the actual list of possible assignments
+    def validate_rankings(self, rankings):
+        return
 
 if __name__ == "__main__":
-    GdocFetcher().run()
+    GdocFetcher("kennonator@gmail.com", "gobbledygook").run()
