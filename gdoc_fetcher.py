@@ -56,11 +56,12 @@ class GdocFetcher():
             count += 1
         print name_map
 
-        matrix = [ranking for ranking in rankings.itervalues()]
-        #print matrix
+        matrix = [self.flip_ranks(ranking) for ranking in rankings.itervalues()]
+        print matrix
 
         m = Munkres()
         indexes = m.compute(matrix)
+        print indexes
 
 #        print_matrix(matrix, msg='Lowest cost through this matrix:')
         total = 0
@@ -151,8 +152,25 @@ class GdocFetcher():
                 errors.append('{0} is missing post {1}'.format(name, k))
         return errors
 
-    def convert_to_indices(self, ranking):        
-        return [POSTS[p] for p in ranking]
+    # converts an indexed ordered list into a weighted list ordered by post
+    # indices-- the first element is the weight for abu dhabi, second is for
+    # canberra, etc.
+    def flip_ranks(self, ranking):
+        ret = []
+        for i in range(0, len(POSTS)):
+            weight = 0
+            for post in ranking:
+                if i == post:
+                    #print 'found {0} at weight {1}'.format(i, weight)
+                    ret.append(weight)
+                    break
+                else:
+                    weight += 1
+        return ret
 
 if __name__ == "__main__":
-    print GdocFetcher("kennonator@gmail.com", "gobbledygook").get_assignments()
+    g = GdocFetcher("kennonator@gmail.com", "gobbledygook")
+    #r = [11,12,0,1,7,3,4,5,6,2,8,9,10,13,14]
+    #print r
+    #print g.flip_ranks(r)
+    print g.get_assignments()
