@@ -3,7 +3,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 from os import curdir, sep
 import cgi
 
-import gdata
+from gdoc_fetcher import GdocFetcher
 
 PORT_NUMBER = 8080
 
@@ -16,7 +16,16 @@ class myHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type','text/html')
         self.end_headers()
-        self.wfile.write("hello world!") 
+
+        try:
+            assignments = GdocFetcher("kennonator@gmail.com", "gobbledygook").get_assignments()
+            self.wfile.write('<ul>')
+            for ass in assignments:
+                self.wfile.write('<li>{0} assigned to {1} (#{2} pick)</li>'.format(*ass))
+            self.wfile.write('</ul>')
+        except Exception as e:
+            self.wfile.write(e)
+
         return
 
     #Handler for the POST requests
