@@ -191,7 +191,8 @@ function init() {
 	    if (rankings[name] == null) {
 		missing += name + ' ';
 		// shuffle is in-place so use slice() to clone
-		rankings[name] = shuffle(posts.slice(0));
+		//rankings[name] = shuffle(posts.slice(0));
+		rankings[name] = posts.slice(0);
 	    }
 	}
 	//alert(missing);
