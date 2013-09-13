@@ -10,12 +10,12 @@ import gdata.spreadsheet.text_db
 from munkres import Munkres, print_matrix
 
 POSTS = {'Abu Dhabi': 0, 
-         'Canberra': 1,
-         'Dakar': 2,
-         'Frankfurt1': 3,
-         'Frankfurt2': 4,
-         'Frankfurt RCSO': 5,
-         'Athens RCSO': 6,
+         'Athens RCSO': 1,
+         'Canberra': 2,
+         'Dakar': 3,
+         'Frankfurt1': 4,
+         'Frankfurt2': 5,
+         'Frankfurt RCSO': 6,
          'London': 7,
          'Mexico City': 8,
          'Montevideo1': 9,
@@ -24,6 +24,11 @@ POSTS = {'Abu Dhabi': 0,
          'Moscow2': 12,
          'New Delhi': 13,
          'New Delhi RCSO': 14,
+         'DC1': 15,
+         'DC2': 16,
+         'DC3': 17,
+         'DC4': 18,
+         'DC5': 19
          }
 
 RPOSTS = dict((v,k) for k, v in POSTS.iteritems())

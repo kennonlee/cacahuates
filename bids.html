@@ -21,7 +21,9 @@
 
 <p>
 Drag the posts to reach your desired bid list (top is most preferred). You will 
-need a PIN to save your work; ask Kennon for yours. Upon saving, click the Solve 
+need a PIN to save your work; ask Kennon for yours. For posts with multiple 
+slots (Frankfurt, Montevideo, Moscow), it's best to order them consecutively 
+(e.g., Frankfurt1, Frankfurt2). Upon saving, click the Solve 
 button to determine optimal assignments.
 </p>
 
@@ -33,14 +35,13 @@ internal workings of the language, and are therefore effectively random.
 </p>
 
 <p>
-Domestic posts are currently not included in the rankings because they are a 
-special case: supply is "unlimited," depending on the assignment panel's needs. 
-Once we determine how many bidders plan on bidding on DC as their top choice, we 
-will change the lists accordingly.
+Domestic assignments are a special case: supply is "unlimited," depending on the 
+assignment panel's needs. Once we determine how many bidders plan on bidding on 
+DC as their top choice, we will change the number of DC slots accordingly.
 </p>
 
 <p>
-All code can be found on <a href="https://github.com/kennonlee/cacahuates">github.com</a>. Enjoy!'
+All code can be found on <a href="https://github.com/kennonlee/cacahuates" target="_blank">github.com</a>. Enjoy!
 </p>
 
 <h2>Current optimal assignments</h2>
@@ -87,6 +88,7 @@ function getAssignments() {
 
 function drawPage(rankings) {
     var people = Object.keys(rankings);
+    people.sort();
     // construct a column for each person
     $.each(people, function (index, name) {
 	var bidcol = $("<div/>").addClass("bidcol");
@@ -177,7 +179,7 @@ function init() {
 		 "Frankfurt1", "Frankfurt2", "Frankfurt RCSO", 
 		 "London", "Mexico City", "Montevideo1", 
 		 "Montevideo2", "Moscow1", "Moscow2", "New Delhi",
-		 "New Delhi RCSO"
+		 "New Delhi RCSO", "DC1", "DC2", "DC3", "DC4", "DC5"
 		];
     
     
