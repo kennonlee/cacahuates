@@ -1,5 +1,7 @@
 
 import json
+import random
+import string
 
 from os import curdir, sep
 
@@ -31,9 +33,17 @@ class FilePersister():
         store = self.get_all()
         return store[name]
 
+def randomword(length):
+    return ''.join(random.choice(string.lowercase) for i in range(length))
+
 if __name__ == "__main__":
     pins = FilePersister('pins.dat')
-    pins.save('Vadim', 'aerw')
+
+    people = ["Kennon", "Vadim", "Pooja", "Casey", "Byron", 
+              "Matt", "Nick", "Miguel", "Dave", "Mark", 
+             ]
+    for person in people:
+        pins.save(person, randomword(4))
 
     print pins.get_all()
 

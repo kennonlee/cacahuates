@@ -8,125 +8,13 @@
 		<meta name="description" content="">
 		<meta name="keywords" content="">
 
-		<link rel="stylesheet" href="http://farhadi.ir/css/style.css">
+		<link rel="stylesheet" href="css/style.css">
 	</head>
 
 <body>
 
-<style type="text/css">
-.savebutton {
-	-moz-box-shadow:inset 0px 1px 0px 0px #bbdaf7;
-	-webkit-box-shadow:inset 0px 1px 0px 0px #bbdaf7;
-	box-shadow:inset 0px 1px 0px 0px #bbdaf7;
-	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #79bbff), color-stop(1, #378de5) );
-	background:-moz-linear-gradient( center top, #79bbff 5%, #378de5 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#79bbff', endColorstr='#378de5');
-	background-color:#79bbff;
-	-webkit-border-top-left-radius:10px;
-	-moz-border-radius-topleft:10px;
-	border-top-left-radius:10px;
-	-webkit-border-top-right-radius:10px;
-	-moz-border-radius-topright:10px;
-	border-top-right-radius:10px;
-	-webkit-border-bottom-right-radius:10px;
-	-moz-border-radius-bottomright:10px;
-	border-bottom-right-radius:10px;
-	-webkit-border-bottom-left-radius:10px;
-	-moz-border-radius-bottomleft:10px;
-	border-bottom-left-radius:10px;
-	text-indent:0;
-	border:1px solid #84bbf3;
-	display:inline-block;
-	color:#ffffff;
-	font-family:Arial;
-	font-size:15px;
-	font-weight:bold;
-	font-style:normal;
-	height:35px;
-	line-height:35px;
-	width:60px;
-	text-decoration:none;
-	text-align:center;
-	text-shadow:1px 1px 0px #528ecc;
-
-	float: left;
-	margin: 5px;
-}
-.savebutton:hover {
-	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #378de5), color-stop(1, #79bbff) );
-	background:-moz-linear-gradient( center top, #378de5 5%, #79bbff 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#378de5', endColorstr='#79bbff');
-	background-color:#378de5;
-	cursor: pointer;
-}.savebutton:active {
-	position:relative;
-	top:1px;
-}
-
-.savemsg {
-	margin: 5px;
-	padding: 5px;
-	color: #ffdddd;
-	background: #ff8888;
-	
-
-	-webkit-border-top-left-radius:5px;
-	-moz-border-radius-topleft:5px;
-	border-top-left-radius:5px;
-	-webkit-border-top-right-radius:5px;
-	-moz-border-radius-topright:5px;
-	border-top-right-radius:5px;
-	-webkit-border-bottom-right-radius:5px;
-	-moz-border-radius-bottomright:5px;
-	border-bottom-right-radius:5px;
-	-webkit-border-bottom-left-radius:5px;
-	-moz-border-radius-bottomleft:5px;
-	border-bottom-left-radius:5px;
-
-}
-
-.pinfield {
-	float: left;
-	margin: 5px;
-	width: 30px;
-}
-
-		.bidcol {
-			float: left;
-			padding: 5px;
-		}
-
-		.sortable {
-			-webkit-user-select: none;
-			-moz-user-select: none;
-			-ms-user-select: none;
-			user-select: none;
-			-webkit-padding-start: 0px;
-		}
-		.sortable.grid {
-			overflow: hidden;
-		}
-		.sortable li {
-			width: 120px;
-			list-style: none;
-			border: 1px solid #CCC;
-			background: #F6F6F6;
-			color: #1C94C4;
-			margin: 5px;
-			padding: 5px;
-			height: 22px;
-		}
-		li.highlight {
-			background: #FEE25F;
-		}
-		li.sortable-placeholder {
-			border: 1px dashed #CCC;
-			background: none;
-		}
-</style>
-
-<script src="http://farhadi.ir/js/jquery-1.7.1.min.js"></script>
-<script src="http://farhadi.ir/projects/html5sortable/jquery.sortable.js"></script>
+<script src="js/jquery-1.7.1.min.js"></script>
+<script src="js/jquery.sortable.js"></script>
 
 
 <h1>2013 Bids</h1>
@@ -158,82 +46,83 @@ accordingly.
 All code can be found on github.org. Enjoy!'
 </p>
 
+<div id="compute" class="computebutton" onclick="window.location.reload()">Compute!</div>
+
 <div id="bidcols"/>
 		
 <script>
 
 function showSaveMsg(name, msg) {
-	var savemsg = $("#savemsg-" + name);
-	$(savemsg).html(msg);
-	$(savemsg).show().delay(2000).fadeOut();
+    var savemsg = $("#savemsg-" + name);
+    $(savemsg).html(msg);
+    $(savemsg).show().delay(2000).fadeOut();
 }
 
-
 function drawPage(rankings) {
-	var people = Object.keys(rankings);
-	// construct a column for each person
-	$.each(people, function (index, name) {
-		var bidcol = $("<div/>").addClass("bidcol");
-		$("<h2>" + name + "</h2>").appendTo($(bidcol));
+    var people = Object.keys(rankings);
+    // construct a column for each person
+    $.each(people, function (index, name) {
+	var bidcol = $("<div/>").addClass("bidcol");
+	$("<h2>" + name + "</h2>").appendTo($(bidcol));
+	
+	// add a list entry for each post
+	var rankingId = "ranking-" + name;
+	var ranking = $("<ul/>").attr("id", rankingId).addClass("sortable");
+	$(ranking).appendTo($(bidcol));	
+	
+	// this will become tied to an ajax request to retrieve stored rankings
+	var posts = rankings[name];
+	for (var i = 0; i < posts.length; i++) {
+	    var post = posts[i];
+	    $("<li>" + post + "</li>").appendTo($(ranking));
+	}
 
-		// add a list entry for each post
-		var rankingId = "ranking-" + name;
-		var ranking = $("<ul/>").attr("id", rankingId).addClass("sortable");
-		$(ranking).appendTo($(bidcol));	
+	// make it drag sortable
+	$(ranking).sortable();
 
-		// this will become tied to an ajax request to retrieve stored rankings
-		var posts = rankings[name];
-		for (var i = 0; i < posts.length; i++) {
-			var post = posts[i];
-			$("<li>" + post + "</li>").appendTo($(ranking));
+	$("<div/>").attr("id", "savemsg-" + name).addClass("savemsg").hide().appendTo($(bidcol));
+
+	var pinField = $('<input type="password"/>').attr("id", "pin-" + name).addClass("pinfield");
+	$(pinField).appendTo($(bidcol));
+
+	var savebutton = $("<div>Save</div>").attr("id", "savebutton-" + name).addClass("savebutton");
+	$(savebutton).click(function() {
+	    var optionTexts = [];
+	    $("#" + rankingId + " li").each(function() { 
+		optionTexts.push($(this).text()); 
+	    });
+
+	    var pin = $("#pin-" + name).val()
+	    if (pin.length == 0) {
+		showSaveMsg(name, "enter a PIN!");
+		return;
+	    }
+
+	    //		alert(name + "(pin " + pin + "): " + optionTexts);
+
+	    request = $.ajax({
+		url: "/save",
+		type: "post",
+		data: {
+		    name: name,
+		    pin: pin,
+		    ranking: optionTexts
 		}
+	    });
 
-		// make it drag sortable
-		$(ranking).sortable();
+	    request.done(function(response, textStatus, jqXHR) {
+		showSaveMsg(name, response);
+	    });
 
-		$("<div/>").attr("id", "savemsg-" + name).addClass("savemsg").hide().appendTo($(bidcol));
+	    request.fail(function (jqXHR, textStatus, errorThrown) {
+		alert("poop");
+	    });
 
-		var pinField = $('<input type="password" size="4"/>').attr("id", "pin-" + name).addClass("pinfield");
-		$(pinField).appendTo($(bidcol));
-
-		var savebutton = $("<div>Save</div>").attr("id", "savebutton-" + name).addClass("savebutton");
-		$(savebutton).click(function() {
-			var optionTexts = [];
-			$("#" + rankingId + " li").each(function() { 
-				optionTexts.push($(this).text()); 
-			});
-
-			var pin = $("#pin-" + name).val()
-			if (pin.length == 0) {
-				showSaveMsg(name, "enter a PIN!");
-				return;
-			}
-
-	//		alert(name + "(pin " + pin + "): " + optionTexts);
-
-			request = $.ajax({
-				url: "/save",
-				type: "post",
-				data: {
-					name: name,
-					pin: pin,
-					ranking: optionTexts
-				}
-			});
-
-			request.done(function(response, textStatus, jqXHR) {
-				showSaveMsg(name, response);
-			});
-
-			request.fail(function (jqXHR, textStatus, errorThrown) {
-				alert("poop");
-			});
-
-		});
-		$(savebutton).appendTo($(bidcol));
-
-		$(bidcol).appendTo($("#bidcols"));
 	});
+	$(savebutton).appendTo($(bidcol));
+
+	$(bidcol).appendTo($("#bidcols"));
+    });
 }
 
 /**
@@ -253,18 +142,18 @@ function shuffle(array) {
 }
 
 function init() {
-	var people = ["Kennon", "Vadim", "Pooja", "Casey", "Byron", 
-			"Matt", "Nick", "Miguel", "Dave"
-			];
-
-	var posts = ["Abu Dhabi", "Athens RCSO", "Canberra", "Dakar", 
-			"Frankfurt1", "Frankfurt2", "Frankfurt RCSO", 
-			"London", "Mexico City", "Montevideo1", 
-			"Montevideo2", "Moscow1", "Moscow2", "New Delhi",
-			"New Delhi RCSO"
-			];
-
-
+    var people = ["Kennon", "Vadim", "Pooja", "Casey", "Byron", 
+		  "Matt", "Nick", "Miguel", "Dave", "Mark"
+		 ];
+    
+    var posts = ["Abu Dhabi", "Athens RCSO", "Canberra", "Dakar", 
+		 "Frankfurt1", "Frankfurt2", "Frankfurt RCSO", 
+		 "London", "Mexico City", "Montevideo1", 
+		 "Montevideo2", "Moscow1", "Moscow2", "New Delhi",
+		 "New Delhi RCSO"
+		];
+    
+    
     request = $.ajax({
         url: "/get_rankings",
         type: "get"
@@ -272,7 +161,7 @@ function init() {
     
     request.done(function(response, textStatus, jqXHR) {
 	var rankings = eval('(' + response + ')');
-
+	
 	var missing = '';
 	for (var i = 0; i < people.length; i++) {
 	    var name = people[i];
