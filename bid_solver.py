@@ -107,11 +107,13 @@ class BidSolver():
         return assignments
 
 
-    # Throws an error if the given rankings are invalid-- that is, if:
-    # - the list is too short 
-    # - the list is too long
-    # - the chosen cities dont match the actual list of possible assignments    
     def validate_rankings(self, rankings):
+        '''
+        Throws an error if the given rankings are invalid-- that is, if:
+        - the list is too short 
+        - the list is too long
+        - the chosen cities dont match the actual list of possible assignments    
+        '''
         errors = []
         for name, ranking in rankings.iteritems():
             if len(ranking) != len(POSTS):
@@ -132,10 +134,13 @@ class BidSolver():
                 errors.append('{0} is missing post {1}'.format(name, k))
         return errors
 
-    # converts an indexed ordered list into a weighted list ordered by post
-    # indices-- the first element is the weight for abu dhabi, second is for
-    # canberra, etc.
     def flip_ranks(self, ranking):
+        '''
+        Converts an indexed ordered list into a weighted list ordered by post
+        indices-- the first element is the weight for Abu Dhabi, second is for
+        Athens, then Canberra, etc.
+
+        '''
         ret = []
         for i in range(0, len(POSTS)):
             weight = 0
