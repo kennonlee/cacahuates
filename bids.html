@@ -20,33 +20,34 @@
 <h1>2013 Bids</h1>
 
 <p>
-Drag the posts to reach your desired bid list (top is most preferred). 
-You will need a PIN to save your work; ask Kennon for yours. Upon 
-saving, click the Compute button to determine optimal assignments.
+Drag the posts to reach your desired bid list (top is most preferred). You will 
+need a PIN to save your work; ask Kennon for yours. Upon saving, click the Solve 
+button to determine optimal assignments.
 </p>
 
 <p>
-To solve for an optimal assignment set, we use the Hungarian 
-algorithm, a polynomial-time solution to the 
-<a href="http://en.wikipedia.org/wiki/Assignment_problem">
-assignment problem</a>.
-Ties are resolved deterministically but are a product of internal
-workings of the language, and are therefore effectively random.
+To solve for an optimal assignment set, we use the Hungarian algorithm, a 
+polynomial-time solution to the <a href="http://en.wikipedia.org/wiki/Assignment_problem">
+assignment problem</a>. Ties are resolved deterministically but are a product of 
+internal workings of the language, and are therefore effectively random.
 </p>
 
 <p>
-Domestic posts are currently not included in the rankings because
-they are a special case: supply is "unlimited," depending on the 
-assignment panel's needs. Once we determine how many bidders plan
-on bidding on DC as their top choice, we will change the lists
-accordingly.
+Domestic posts are currently not included in the rankings because they are a 
+special case: supply is "unlimited," depending on the assignment panel's needs. 
+Once we determine how many bidders plan on bidding on DC as their top choice, we 
+will change the lists accordingly.
 </p>
 
 <p>
-All code can be found on github.org. Enjoy!'
+All code can be found on <a href="https://github.com/kennonlee/cacahuates">github.com</a>. Enjoy!'
 </p>
 
-<div id="compute" class="computebutton" onclick="window.location.reload()">Compute!</div>
+<h2>Current optimal assignments</h2>
+
+<div id="assignments"></div>
+
+<div id="compute" class="computebutton" onclick="window.location.reload()">Solve!</div>
 
 <div id="bidcols"/>
 		
@@ -56,6 +57,32 @@ function showSaveMsg(name, msg) {
     var savemsg = $("#savemsg-" + name);
     $(savemsg).html(msg);
     $(savemsg).show().delay(2000).fadeOut();
+}
+
+function getAssignments() {
+    request = $.ajax({
+	url: "/get_assignments",
+	type: "get",
+    });
+
+    request.done(function(response, textStatus, jqXHR) {
+	var assignments = eval('(' + response + ')');
+
+	var assignmentList = $("<ul>")
+	$(assignmentList).appendTo($("#assignments"));
+
+	for (var i = 0; i < assignments.length; i++) {
+	    var info = assignments[i];
+	    var assignmentStr = info[0] + " -> " + info[1] + " (#" + info[2] + " pick)";
+	    $("<li>" + assignmentStr + "</li>").appendTo($(assignmentList));
+	}
+	//alert(response);
+
+    });
+
+    request.fail(function (jqXHR, textStatus, errorThrown) {
+	alert("poop");
+    });
 }
 
 function drawPage(rankings) {
@@ -174,6 +201,8 @@ function init() {
 	//alert(missing);
 
 	drawPage(rankings);
+
+	getAssignments();
     });
     
     request.fail(function (jqXHR, textStatus, errorThrown) {

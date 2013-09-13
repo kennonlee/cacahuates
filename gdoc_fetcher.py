@@ -34,8 +34,7 @@ class GdocFetcher():
         self.email = email
         self.password = password
 
-    def get_assignments(self):
-        rankings = self.get_entries()
+    def get_assignments(self, rankings):
         errors = self.validate_rankings(rankings)
         if len(errors) != 0:
             raise Exception(errors)
@@ -173,4 +172,4 @@ if __name__ == "__main__":
     #r = [11,12,0,1,7,3,4,5,6,2,8,9,10,13,14]
     #print r
     #print g.flip_ranks(r)
-    print g.get_assignments()
+    print g.get_assignments(g.get_entries())

@@ -21,6 +21,9 @@ class myHandler(BaseHTTPRequestHandler):
         if self.path == '/get_rankings':
             self.get_rankings()
             return
+        if self.path == '/get_assignments':
+            self.get_assignments()
+            return
 
         if self.path == '/':
             self.path = '/bids.html'
@@ -37,6 +40,10 @@ class myHandler(BaseHTTPRequestHandler):
             mimetype = 'application/javascript'
         elif self.path.endswith('.css'):
             mimetype = 'text/css'
+        elif self.path.endswith('.png'):
+            mimetype = 'image/png'
+        else:
+            raise IOError()
 
         f = open(curdir + sep + path)
         self.send_response(200)
@@ -68,21 +75,28 @@ class myHandler(BaseHTTPRequestHandler):
 
         rankings_persister = FilePersister('rankings.dat')
         rankings = rankings_persister.get_all()
-        print rankings
+        #print rankings
         self.wfile.write(json.dumps(rankings))
-        return
+
+    def get_assignments(self):
+        rankings_persister = FilePersister('rankings.dat')
+        rankings = rankings_persister.get_all()
+        print rankings
+
+        self.send_response(200)
+        self.end_headers()
 
 # OLD CODE!
         try: 
-            assignments = GdocFetcher("kennonator@gmail.com", "gobbledygook").get_assignments()
-            self.wfile.write('<ul>')
-            for ass in assignments:
-                self.wfile.write('<li>{0} assigned to {1} (#{2} pick)</li>'.format(*ass))
-                self.wfile.write('</ul>')
+            assignments = GdocFetcher("kennonator@gmail.com", "gobbledygook").get_assignments(rankings)
+            self.wfile.write(json.dumps(assignments))
+
+#            self.wfile.write('<ul>')
+#            for ass in assignments:
+#                self.wfile.write('<li>{0} assigned to {1} (#{2} pick)</li>'.format(*ass))
+#            self.wfile.write('</ul>')
         except Exception as e:
             self.wfile.write(e)
-    
-        return			
 
     def save(self, postvars):
         self.send_response(200)
