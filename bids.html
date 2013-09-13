@@ -21,9 +21,7 @@
 
 <p>
 Drag the posts to reach your desired bid list (top is most preferred). You will 
-need a PIN to save your work; ask Kennon for yours. For posts with multiple 
-slots (Frankfurt, Montevideo, Moscow), it's best to order them consecutively 
-(e.g., Frankfurt1, Frankfurt2). Upon saving, click the Solve 
+need a PIN to save your work; ask Kennon for yours. Upon saving, click the Solve 
 button to determine optimal assignments.
 </p>
 
@@ -32,12 +30,6 @@ To solve for an optimal assignment set, we use the Hungarian algorithm, a
 polynomial-time solution to the <a href="http://en.wikipedia.org/wiki/Assignment_problem">
 assignment problem</a>. Ties are resolved deterministically but are a product of 
 internal workings of the language, and are therefore effectively random.
-</p>
-
-<p>
-Domestic assignments are a special case: supply is "unlimited," depending on the 
-assignment panel's needs. Once we determine how many bidders plan on bidding on 
-DC as their top choice, we will change the number of DC slots accordingly.
 </p>
 
 <p>
@@ -176,10 +168,10 @@ function init() {
 		 ];
     
     var posts = ["Abu Dhabi", "Athens RCSO", "Canberra", "Dakar", 
-		 "Frankfurt1", "Frankfurt2", "Frankfurt RCSO", 
-		 "London", "Mexico City", "Montevideo1", 
-		 "Montevideo2", "Moscow1", "Moscow2", "New Delhi",
-		 "New Delhi RCSO", "DC1", "DC2", "DC3", "DC4", "DC5"
+		 "Frankfurt", "Frankfurt RCSO", 
+		 "London", "Mexico City", "Montevideo", 
+		 "Moscow", "New Delhi",
+		 "New Delhi RCSO", "DC"
 		];
     
     

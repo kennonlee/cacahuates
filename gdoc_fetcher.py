@@ -1,3 +1,4 @@
+
 import socket
 import logging
 
@@ -7,7 +8,14 @@ import gdata.spreadsheet
 import gdata.spreadsheet.service
 import gdata.spreadsheet.text_db
 
-from munkres import Munkres, print_matrix
+from munkres import Munkres
+
+DUPE_POSTS = {
+    'Frankfurt': 2,
+    'Montevideo': 2,
+    'Moscow': 2,
+    'DC': 5
+}
 
 POSTS = {'Abu Dhabi': 0, 
          'Athens RCSO': 1,
@@ -39,7 +47,30 @@ class GdocFetcher():
         self.email = email
         self.password = password
 
+
+    def add_dupe_posts(self, rankings):
+        '''
+        For each list of rankings, adds in multiple items for the posts that 
+        have more than one slot (Frankfurt, Montevideo, Moscow, DC).
+        '''
+        new_rankings = {}
+        for name, ranking in rankings.iteritems():
+            # sort of inefficient to create a new list, but oh well
+            new_ranking = []
+            for post in ranking:
+                if post in DUPE_POSTS:
+                    dupes = DUPE_POSTS[post]
+                    for i in range(1, dupes + 1):
+                        new_ranking.append('{0}{1}'.format(post, i))
+                else:
+                    new_ranking.append(post)
+            new_rankings[name] = new_ranking
+        return new_rankings
+
     def get_assignments(self, rankings):
+        rankings = self.add_dupe_posts(rankings)
+        #print rankings
+
         errors = self.validate_rankings(rankings)
         if len(errors) != 0:
             raise Exception(errors)
@@ -67,7 +98,6 @@ class GdocFetcher():
         indexes = m.compute(matrix)
         print indexes
 
-#        print_matrix(matrix, msg='Lowest cost through this matrix:')
         total = 0
         assignments = []
         for row, column in indexes:
@@ -75,9 +105,10 @@ class GdocFetcher():
             total += value
             print '{0} assigned to {1} (cost {2})'.format(name_map[row], RPOSTS[column], value)
             assignments.append([name_map[row], RPOSTS[column], value + 1])
-        print 'total cost=%d' % total    
+        #print 'total cost=%d' % total    
         return assignments
 
+    # NO LONGER USED! Bid lists are no longer stored in gdocs.
     def get_entries(self):                
         """
         Returns a dictionary of names to ranking lists. No error checking is
