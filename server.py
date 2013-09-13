@@ -1,8 +1,11 @@
 #!/usr/bin/python
+import cgi
+import json
+
 from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 from os import curdir, sep
-import cgi
 
+from file_persister import FilePersister
 from gdoc_fetcher import GdocFetcher
 
 PORT_NUMBER = 8080
@@ -13,36 +16,91 @@ class myHandler(BaseHTTPRequestHandler):
     
     #Handler for the GET requests
     def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type','text/html')
-        self.end_headers()
+        
+        # debug code... remove this
+        if self.path == '/get_rankings':
+            self.get_rankings()
+            return
+
+        if self.path == '/':
+            self.path = '/bids.html'
 
         try:
+            self.send_file(self.path)
+        except IOError:
+            self.send_error(404, 'File Not Found: {0}'.format(self.path))
+
+    def send_file(self, path):
+        if self.path.endswith('.html'):
+            mimetype = 'text/html'
+        elif self.path.endswith('.js'):
+            mimetype = 'application/javascript'
+        elif self.path.endswith('.css'):
+            mimetype = 'text/css'
+
+        f = open(curdir + sep + path)
+        self.send_response(200)
+        self.send_header('Content-type', mimetype)
+        self.end_headers()
+        self.wfile.write(f.read())
+        f.close()
+
+    #Handler for the POST requests
+    def do_POST(self):
+        ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
+        if ctype == 'multipart/form-data':
+            postvars = cgi.parse_multipart(self.rfile, pdict)
+        elif ctype == 'application/x-www-form-urlencoded':
+            length = int(self.headers.getheader('content-length'))
+            postvars = cgi.parse_qs(self.rfile.read(length), keep_blank_values=1)
+            print 'do_POST POSTVARS', postvars
+        else:
+            postvars = {}
+
+        if self.path == "/get_rankings":
+            self.get_assignments()
+        elif self.path == '/save':
+            self.save(postvars)
+
+    def get_rankings(self):
+        self.send_response(200)
+        self.end_headers()
+
+        rankings_persister = FilePersister('rankings.dat')
+        rankings = rankings_persister.get_all()
+        print rankings
+        self.wfile.write(json.dumps(rankings))
+        return
+
+# OLD CODE!
+        try: 
             assignments = GdocFetcher("kennonator@gmail.com", "gobbledygook").get_assignments()
             self.wfile.write('<ul>')
             for ass in assignments:
                 self.wfile.write('<li>{0} assigned to {1} (#{2} pick)</li>'.format(*ass))
-            self.wfile.write('</ul>')
+                self.wfile.write('</ul>')
         except Exception as e:
             self.wfile.write(e)
+    
+        return			
 
-        return
+    def save(self, postvars):
+        self.send_response(200)
+        self.end_headers()
+        
+        name = postvars['name'][0]
+        pin = postvars['pin'][0]
 
-    #Handler for the POST requests
-    def do_POST(self):
-        if self.path=="/send":
-            form = cgi.FieldStorage(
-                fp=self.rfile, 
-                headers=self.headers,
-                environ={'REQUEST_METHOD':'POST',
-                         'CONTENT_TYPE':self.headers['Content-Type'],
-                         })
+        # TODO: verify pin
+        pin_persister = FilePersister('pins.dat')
+        stored_pin = pin_persister.get(name)
+        if stored_pin != pin:
+            self.wfile.write('Bad PIN!')
+            return
 
-            print "Your name is: %s" % form["your_name"].value
-            self.send_response(200)
-            self.end_headers()
-            self.wfile.write("Thanks %s !" % form["your_name"].value)
-            return			
+        rankings_persister = FilePersister('rankings.dat')
+        rankings_persister.save(postvars['name'][0], postvars['ranking[]'])
+        self.wfile.write('Saved!')
 					
 try:
     #Create a web server and define the handler to manage the
