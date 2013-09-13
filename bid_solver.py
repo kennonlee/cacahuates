@@ -10,6 +10,7 @@ import gdata.spreadsheet.text_db
 
 from munkres import Munkres
 
+# bad things happen in prettify_dupes() if theres a post with more than 9 slots!
 DUPE_POSTS = {
     'Frankfurt': 2,
     'Montevideo': 2,
@@ -62,6 +63,23 @@ class BidSolver():
             new_rankings[name] = new_ranking
         return new_rankings
 
+    
+    def prettify_dupes(self, post, rank):
+        '''
+        Bad things would happen here if theres a post with more than 9 slots!
+
+        There's a weak attempt to fudge the rankings but it doesnt really work.
+        For instance, if we have 3 people that bid Moscow (2 slots), the person
+        that doesnt get Moscow will get his second bid, but it will show as #3.
+
+        The only real way to fix this is to revert the bids to their unduped
+        state when determining the assignment rank. But thats harder.
+        '''
+        if post[:-1] in DUPE_POSTS:
+            base_rank = rank - int(post[-1]) + 1
+            return [post[:-1], base_rank]
+        return [post, rank]
+
     def get_assignments(self, rankings):
         #print rankings
 
@@ -102,7 +120,8 @@ class BidSolver():
             value = matrix[row][column]
             total += value
             print '{0} assigned to {1} (cost {2})'.format(name_map[row], RPOSTS[column], value)
-            assignments.append([name_map[row], RPOSTS[column], value + 1])
+            prettified = self.prettify_dupes(RPOSTS[column], value + 1)
+            assignments.append([name_map[row], prettified[0], prettified[1]])
         #print 'total cost=%d' % total    
         return assignments
 
