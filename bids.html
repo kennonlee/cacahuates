@@ -64,9 +64,11 @@ function getAssignments() {
 	var assignmentList = $("<ul>")
 	$(assignmentList).appendTo($("#assignments"));
 
+	assignments.sort();
 	for (var i = 0; i < assignments.length; i++) {
 	    var info = assignments[i];
-	    var assignmentStr = info[0] + " -> " + info[1] + " (#" + info[2] + " pick)";
+//	    var assignmentStr = info[0] + " -> " + info[1] + " (#" + info[2] + " pick)";
+	    var assignmentStr = info[0] + " -> " + info[1];
 	    $("<li>" + assignmentStr + "</li>").appendTo($(assignmentList));
 	}
 	//alert(response);
