@@ -6,7 +6,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 from os import curdir, sep
 
 from file_persister import FilePersister
-from gdoc_fetcher import GdocFetcher
+from bid_solver import BidSolver
 
 PORT_NUMBER = 8080
 
@@ -83,20 +83,16 @@ class myHandler(BaseHTTPRequestHandler):
         rankings = rankings_persister.get_all()
         print rankings
 
-        self.send_response(200)
-        self.end_headers()
-
-# OLD CODE!
         try: 
-            assignments = GdocFetcher("kennonator@gmail.com", "gobbledygook").get_assignments(rankings)
-            self.wfile.write(json.dumps(assignments))
-
-#            self.wfile.write('<ul>')
-#            for ass in assignments:
-#                self.wfile.write('<li>{0} assigned to {1} (#{2} pick)</li>'.format(*ass))
-#            self.wfile.write('</ul>')
+            assignments = BidSolver().get_assignments(rankings) 
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(assignments)) 
         except Exception as e:
+            print e
             self.wfile.write(e)
+            self.send_response(500)
+            self.end_headers()
 
     def save(self, postvars):
         self.send_response(200)

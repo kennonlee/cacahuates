@@ -41,12 +41,7 @@ POSTS = {'Abu Dhabi': 0,
 
 RPOSTS = dict((v,k) for k, v in POSTS.iteritems())
 
-class GdocFetcher():
-
-    def __init__(self, email, password):
-        self.email = email
-        self.password = password
-
+class BidSolver():
 
     def add_dupe_posts(self, rankings):
         '''
@@ -68,11 +63,14 @@ class GdocFetcher():
         return new_rankings
 
     def get_assignments(self, rankings):
+        #print rankings
+
         rankings = self.add_dupe_posts(rankings)
         #print rankings
 
         errors = self.validate_rankings(rankings)
         if len(errors) != 0:
+            print errors
             raise Exception(errors)
         #print rankings
 
@@ -108,59 +106,6 @@ class GdocFetcher():
         #print 'total cost=%d' % total    
         return assignments
 
-    # NO LONGER USED! Bid lists are no longer stored in gdocs.
-    def get_entries(self):                
-        """
-        Returns a dictionary of names to ranking lists. No error checking is
-        done on the contents of the lists.
-	"""
-        gd_client = gdata.spreadsheet.service.SpreadsheetsService()
-        gd_client.email = self.email
-        gd_client.password = self.password
-        gd_client.source = 'my app poops'
-
-        try:                    
-	    # log in
-            gd_client.ProgrammaticLogin()
-        except socket.sslerror, e:
-            logging.error('Spreadsheet socket.sslerror: ' + str(e))
-            return False
-	    
-	key = '0Ag679of2C-6xdHB4Vjk0a01PZ0lkaXZlTTlqRkIzOHc'
-	wksht_id = '0'
-        
-        q = gdata.spreadsheet.service.CellQuery()
-        q['min-col'] = '2'
-        q['max-col'] = '10'
-        q['min-row'] = '2'
-        q['max-row'] = '21'
-
-        try:
-            feed = gd_client.GetCellsFeed(key, query=q)            
-        except gdata.service.RequestError, e:
-            logging.error('Spreadsheet gdata.service.RequestError: ' + str(e))
-            return False
-        except socket.sslerror, e:
-            logging.error('Spreadsheet socket.sslerror: ' + str(e))
-            return False
-        
-        # Iterate over the rows 
-        name_indices = {}
-        rankings = {}
-        for row_entry in feed.entry:
-            cell = row_entry.cell 
-            cell_row = int(cell.row)
-            cell_col = int(cell.col)
-            cell_text = cell.text
-
-            # this cell is someone's name. Make a new dict entry for them.
-            if cell_row == 2:
-                name_indices[cell_col] = cell_text
-                rankings[cell_text] = []
-            else:
-                ranking = rankings[name_indices[cell_col]]
-                ranking.append(cell_text)
-        return rankings
 
     # Throws an error if the given rankings are invalid-- that is, if:
     # - the list is too short 
@@ -204,7 +149,7 @@ class GdocFetcher():
         return ret
 
 if __name__ == "__main__":
-    g = GdocFetcher("kennonator@gmail.com", "gobbledygook")
+    g = BidSolver()
     #r = [11,12,0,1,7,3,4,5,6,2,8,9,10,13,14]
     #print r
     #print g.flip_ranks(r)
