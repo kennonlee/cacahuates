@@ -39,6 +39,8 @@ class myHandler(BaseHTTPRequestHandler):
             mimetype = 'text/css'
         elif self.path.endswith('.png'):
             mimetype = 'image/png'
+        elif self.path.endswith('.gif'):
+            mimetype = 'image/gif'
         else:
             raise IOError()
 

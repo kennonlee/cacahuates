@@ -1,6 +1,16 @@
 @import url(http://fonts.googleapis.com/css?family=Droid+Serif|Droid+Sans);
 
 
+.spinnertext {
+    font-weight: bold;
+    color: #6090e0;
+    margin-left: 20px;
+}
+
+.spinner {
+    margin-left: 40px;
+}
+
 .computebutton {
     -moz-box-shadow:inset 0px 1px 0px 0px #bbdaf7;
     -webkit-box-shadow:inset 0px 1px 0px 0px #bbdaf7;
@@ -174,7 +184,7 @@ img {
 }
 
 body {
-	margin: 0;
+	margin: 10px;
 	font-family: 'Droid Sans', sans-serif;
 	background: url(images/bg.png);
 	color: #555;

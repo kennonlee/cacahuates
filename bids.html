@@ -38,13 +38,16 @@ All code can be found on <a href="https://github.com/kennonlee/cacahuates" targe
 
 <h2>Current optimal assignments</h2>
 Your assignment will not appear until you have saved your bid list. Don't worry-- you can edit and resave it at any time.
-'
-<div id="assignments"></div>
+
+<div id="assignments">
+  <p id="spinnertext" class="spinnertext">Calculating...</p>
+  <p class="spinner"><img src="css/images/spinner.gif"></img></p>
+</div>
 
 <div id="compute" class="computebutton" onclick="window.location.reload()">Solve!</div>
 
 <div id="bidcols"/>
-		
+'		
 <script>
 
 function showSaveMsg(name, msg) {
@@ -60,20 +63,25 @@ function getAssignments() {
     });
 
     request.done(function(response, textStatus, jqXHR) {
-	var assignments = eval('(' + response + ')');
-
-	var assignmentList = $("<ul>")
-	$(assignmentList).appendTo($("#assignments"));
-
-	assignments.sort();
-	for (var i = 0; i < assignments.length; i++) {
-	    var info = assignments[i];
-//	    var assignmentStr = info[0] + " -> " + info[1] + " (#" + info[2] + " pick)";
-	    var assignmentStr = info[0] + " -> " + info[1];
-	    $("<li>" + assignmentStr + "</li>").appendTo($(assignmentList));
-	}
-	//alert(response);
-
+	setTimeout(function() {
+	    $("#spinnertext").html("Calculating... wait for it...");
+	    setTimeout(function() {
+		$("#assignments").html("");
+		var assignments = eval('(' + response + ')');
+		
+		var assignmentList = $("<ul>")
+		$(assignmentList).appendTo($("#assignments"));
+		
+		assignments.sort();
+		for (var i = 0; i < assignments.length; i++) {
+		    var info = assignments[i];
+	//	    var assignmentStr = info[0] + " -> " + info[1] + " (#" + info[2] + " pick)";
+		    var assignmentStr = info[0] + " -> " + info[1];
+		    $("<li>" + assignmentStr + "</li>").appendTo($(assignmentList));
+		}
+		//alert(response);
+	    }, 1500);
+	}, 1000);
     });
 
     request.fail(function (jqXHR, textStatus, errorThrown) {
