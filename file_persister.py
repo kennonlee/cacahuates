@@ -39,9 +39,13 @@ def randomword(length):
 if __name__ == "__main__":
     pins = FilePersister('pins.dat')
 
-    people = ["Kennon", "Vadim", "Pooja", "Casey", "Byron", 
-              "Matt", "Nick", "Miguel", "Dave", "Mark", 
-             ]
+#    people = ["Kennon", "Vadim", "Pooja", "Casey", "Byron", 
+#              "Matt", "Nick", "Miguel", "Dave", "Mark", 
+#             ]
+
+    # round 2
+    people = ["Theresa", "Jeremy", "Eric", "Phillip", "DaveP", "Sam", "Andrew", 
+              "Souleymane"]
     for person in people:
         pins.save(person, randomword(4))
 

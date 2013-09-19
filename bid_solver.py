@@ -93,7 +93,7 @@ class BidSolver():
         #print rankings
 
         names = []
-        for name, ranking in rankings.iteritems():
+        for name, ranking in rankings.items():
             names.append(name)
             converted = [POSTS[post] for post in ranking]
             rankings[name] = converted
