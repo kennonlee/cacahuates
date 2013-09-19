@@ -22,7 +22,7 @@
 <p>
 Drag the posts to reach your desired bid list (top is most preferred). You will 
 need a PIN to save your work; ask Kennon for yours. Upon saving, click the Solve 
-button to determine optimal assignments.
+button to calculate post assignments.
 </p>
 
 <p>
@@ -64,7 +64,7 @@ function getAssignments() {
 
     request.done(function(response, textStatus, jqXHR) {
 	setTimeout(function() {
-	    $("#spinnertext").html("Calculating... wait for it...");
+	    $("#spinnertext").html("Wait for it...");
 	    setTimeout(function() {
 		$("#assignments").html("");
 		var assignments = eval('(' + response + ')');
@@ -80,8 +80,8 @@ function getAssignments() {
 		    $("<li>" + assignmentStr + "</li>").appendTo($(assignmentList));
 		}
 		//alert(response);
-	    }, 1500);
-	}, 1000);
+	    }, 1000 + (Math.random() * 500));
+	}, 500 + (Math.random() * 500));
     });
 
     request.fail(function (jqXHR, textStatus, errorThrown) {
