@@ -36,8 +36,31 @@ class FilePersister():
 def randomword(length):
     return ''.join(random.choice(string.lowercase) for i in range(length))
 
+def remove_from_all(elem):
+    '''
+    Removes the given element from all rankings, then persists them all. 
+    Inefficient but shrug. Assumes the persisted value is a list.
+    '''
+    p = FilePersister("rankings.dat")
+    data = p.get_all()
+    for person, ranking in data.items():
+        ranking.remove(elem)
+        p.save(person, ranking)
+
+def insert_for_all(elem):
+    '''
+    Inserts the given element into all rankings, then persists them all. 
+    Inefficient but shrug. Assumes the persisted value is a list.
+    '''
+    p = FilePersister("rankings.dat")
+    data = p.get_all()
+    for person, ranking in data.items():
+        ranking.append(elem)
+        p.save(person, ranking)
+
+
 if __name__ == "__main__":
-    pins = FilePersister('pins.dat')
+#    pins = FilePersister('pins.dat')
 
 #    people = ["Kennon", "Vadim", "Pooja", "Casey", "Byron", 
 #              "Matt", "Nick", "Miguel", "Dave", "Mark", 
@@ -53,4 +76,10 @@ if __name__ == "__main__":
 
 #    print pins.get('Kennon')
 
-    print randomword(4)
+#    print randomword(4)
+
+#    insert_for_all("Athens RCSO")
+#    insert_for_all("New Delhi RCSO")
+
+    remove_from_all("Athens RCSO")
+    remove_from_all("New Delhi RCSO")
