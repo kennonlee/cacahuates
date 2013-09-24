@@ -44,11 +44,13 @@ if __name__ == "__main__":
 #             ]
 
     # round 2
-    people = ["Theresa", "Jeremy", "Eric", "Phillip", "DaveP", "Sam", "Andrew", 
-              "Souleymane"]
-    for person in people:
-        pins.save(person, randomword(4))
+#    people = ["Theresa", "Jeremy", "Eric", "Phillip", "DaveP", "Sam", "Andrew", 
+#              "Souleymane"]
+#    for person in people:
+#        pins.save(person, randomword(4))
 
-    print pins.get_all()
+#    print pins.get_all()
 
-    print pins.get('Kennon')
+#    print pins.get('Kennon')
+
+    print randomword(4)
