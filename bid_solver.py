@@ -15,29 +15,29 @@ DUPE_POSTS = {
     'Frankfurt': 2,
     'Montevideo': 2,
     'Moscow': 2,
-    'DC': 5
+    'DC': 7
 }
 
 POSTS = {'Abu Dhabi': 0, 
-         'Athens RCSO': 1,
-         'Canberra': 2,
-         'Dakar': 3,
-         'Frankfurt1': 4,
-         'Frankfurt2': 5,
-         'Frankfurt RCSO': 6,
-         'London': 7,
-         'Mexico City': 8,
-         'Montevideo1': 9,
-         'Montevideo2': 10,
-         'Moscow1': 11,
-         'Moscow2': 12,
-         'New Delhi': 13,
-         'New Delhi RCSO': 14,
-         'DC1': 15,
-         'DC2': 16,
-         'DC3': 17,
-         'DC4': 18,
-         'DC5': 19
+         'Canberra': 1,
+         'Dakar': 2,
+         'Frankfurt1': 3,
+         'Frankfurt2': 4,
+         'Frankfurt RCSO': 5,
+         'London': 6,
+         'Mexico City': 7,
+         'Montevideo1': 8,
+         'Montevideo2': 9,
+         'Moscow1': 10,
+         'Moscow2': 11,
+         'New Delhi': 12,
+         'DC1': 13,
+         'DC2': 14,
+         'DC3': 15,
+         'DC4': 16,
+         'DC5': 17,
+         'DC6': 18,
+         'DC7': 19
          }
 
 RPOSTS = dict((v,k) for k, v in POSTS.iteritems())
