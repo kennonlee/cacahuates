@@ -19,22 +19,27 @@
 
 <h1>2013 Bids</h1>
 
-<p>
+<div>
 Drag the posts to reach your desired bid list (top is most preferred). You will 
 need a PIN to save your work; ask Kennon for yours. Upon saving, click the Solve 
 button to calculate post assignments.
-</p>
+</div>
 
-<p>
+<div>
+<span class="disclaimer">NOTE:</span>
+OSB states that you should have NO expectations that this site, or its computed results, will have any bearing on final assignments. The site's primary purpose is to encourage dialogue between bidders. 
+</div>
+
+<div>
 To solve for an optimal assignment set, we use the Hungarian algorithm, a 
 polynomial-time solution to the <a href="http://en.wikipedia.org/wiki/Assignment_problem">
 assignment problem</a>. Ties are resolved deterministically but this is a product 
 of internal workings of the language, and is therefore effectively random.
-</p>
+</div>
 
-<p>
+<div>
 All code can be found on <a href="https://github.com/kennonlee/cacahuates" target="_blank">github.com</a>. Enjoy!
-</p>
+</div>
 
 <h2>Current optimal assignments</h2>
 Your assignment will not appear until you have saved your bid list. Don't worry-- you can edit and resave it at any time.
@@ -47,7 +52,7 @@ Your assignment will not appear until you have saved your bid list. Don't worry-
 <div id="compute" class="computebutton" onclick="window.location.reload()">Solve!</div>
 
 <div id="bidcols"/>
-'		
+
 <script>
 
 function showSaveMsg(name, msg) {

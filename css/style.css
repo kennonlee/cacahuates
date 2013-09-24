@@ -1,5 +1,13 @@
 @import url(http://fonts.googleapis.com/css?family=Droid+Serif|Droid+Sans);
 
+div {
+    margin-bottom: 6px;
+}
+
+span.disclaimer {
+    font-weight: bold;
+    color: #d04040;
+}
 
 .spinnertext {
     font-weight: bold;
