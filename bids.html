@@ -19,15 +19,15 @@
 
 <h1>2013 Bids</h1>
 
+<div class="disclaimer">
+NOTE: OSB states that you should have NO expectations that this site, or its 
+computed results, will have any bearing on final assignments.
+</div>
+
 <div>
 Drag the posts to reach your desired bid list (top is most preferred). You will 
 need a PIN to save your work; ask Kennon for yours. Upon saving, click the Solve 
 button to calculate post assignments.
-</div>
-
-<div>
-<span class="disclaimer">NOTE:</span>
-OSB states that you should have NO expectations that this site, or its computed results, will have any bearing on final assignments. The site's primary purpose is to encourage dialogue between bidders. 
 </div>
 
 <div>
@@ -44,15 +44,29 @@ All code can be found on <a href="https://github.com/kennonlee/cacahuates" targe
 <h2>Current optimal assignments</h2>
 Your assignment will not appear until you have saved your bid list. Don't worry-- you can edit and resave it at any time.
 
-<div id="assignments">
+<div id="assignments">'
   <p id="spinnertext" class="spinnertext">Calculating...</p>
   <p class="spinner"><img src="css/images/spinner.gif"></img></p>
 </div>
 
 <div id="compute" class="computebutton" onclick="window.location.reload()">Solve!</div>
+    <div id="bidcols">
+    </div>
+</div>
 
-<div id="bidcols"/>
+<div id="floatspacer" class="floatspacer">
 
+<h1>God Mode</h1>
+
+    <div>Force assignments to whoever you want, then click Submit to run the assignment algorithm. If you try to force too many people to a given post (e.g., assigning 3 people to Moscow), then the algorithm will randomly choose from among the forced assignees.
+
+<div></div>
+
+<div id="godmode">
+    <div id="godassignments"></div>
+    <form action="" method="get" id="godform">
+    </form>
+</div>
 <script>
 
 function showSaveMsg(name, msg) {
@@ -61,32 +75,41 @@ function showSaveMsg(name, msg) {
     $(savemsg).show().delay(2000).fadeOut();
 }
 
-function getAssignments() {
+function getAssignments(forced, targetElemRef) {
     request = $.ajax({
 	url: "/get_assignments",
 	type: "get",
+	data: forced
     });
 
     request.done(function(response, textStatus, jqXHR) {
 	setTimeout(function() {
 	    $("#spinnertext").html("Wait for it...");
 	    setTimeout(function() {
-		$("#assignments").html("");
+		$(targetElemRef).html("");
 		var assignments = eval('(' + response + ')');
 		
 		var assignmentList = $("<ul>")
-		$(assignmentList).appendTo($("#assignments"));
+		$(assignmentList).appendTo($(targetElemRef));
 		
 		assignments.sort();
 		for (var i = 0; i < assignments.length; i++) {
 		    var info = assignments[i];
 	//	    var assignmentStr = info[0] + " -> " + info[1] + " (#" + info[2] + " pick)";
 		    var assignmentStr = info[0] + " -> " + info[1];
-		    $("<li>" + assignmentStr + "</li>").appendTo($(assignmentList));
+		    var rank = info[2];
+		    if (rank < -10) {
+			$('<li class="forced">' + assignmentStr + "</li>").appendTo($(assignmentList));
+		    }
+		    else {
+			$("<li>" + assignmentStr + "</li>").appendTo($(assignmentList));
+		    }
 		}
 		//alert(response);
-	    }, 1000 + (Math.random() * 500));
-	}, 500 + (Math.random() * 500));
+//	    }, 1000 + (Math.random() * 500));
+//	}, 500 + (Math.random() * 500));
+	    }, (Math.random() * 500));
+	}, (Math.random() * 500));
     });
 
     request.fail(function (jqXHR, textStatus, errorThrown) {
@@ -94,7 +117,7 @@ function getAssignments() {
     });
 }
 
-function drawPage(rankings) {
+function drawBidLists(rankings) {
     var people = Object.keys(rankings);
     people.sort();
     // construct a column for each person
@@ -163,6 +186,25 @@ function drawPage(rankings) {
 }
 
 /**
+ *
+ */
+function drawGodMode(people, posts) {
+    $.each(people, function (index, name) {
+	var str = '<label for="god-label-' + name + '">' + name + '</label>';
+	str += '<select id="god-select-' + name + '" name="' + name + '"/>';
+	$(str).addClass('godselect').appendTo($("#godform"));
+	$('<option value="">---</option>').appendTo('#god-select-' + name);
+	$.each(posts, function(index, post) {
+	    $('<option value="' + post + '">' + post + '</option>').appendTo('#god-select-' + name);
+	});
+    });
+    $('<input type="submit"/>').appendTo('#godform').click(function() {
+	getAssignments($('#godform').serialize(), '#godassignments');
+	return false;
+    });
+}
+
+/**
  * Randomize array element order in-place.
  * Using Fisher-Yates shuffle algorithm.
  * 
@@ -179,6 +221,7 @@ function shuffle(array) {
 }
 
 function init() {
+    
     var people = ["Kennon", "Vadim", "Pooja", "Casey", "Byron", 
 		  "Matt", "Nick", "Miguel", "DaveG", "Mark",
 		  "Theresa", "Jeremy", "Eric", "Phillip", "DaveP", "Sam", 
@@ -190,11 +233,18 @@ function init() {
 		 "London", "Mexico City", "Montevideo", 
 		 "Moscow", "New Delhi", "DC"
 		];
-    
-    
+
+    // pull out forced assignments from url, pass to get_rankings
+    var urlParams = getUrlParams();
+    for (var key in urlParams) {
+	if (urlParams[key] == '') {
+	    delete urlParams[key];
+	}
+    }
+
     request = $.ajax({
         url: "/get_rankings",
-        type: "get"
+        type: "get",
     });
     
     request.done(function(response, textStatus, jqXHR) {
@@ -212,15 +262,31 @@ function init() {
 	}
 	//alert(missing);
 
-	drawPage(rankings);
-
-	getAssignments();
+	drawBidLists(rankings);
+	drawGodMode(people, posts);
+	getAssignments(urlParams, '#assignments');
     });
     
     request.fail(function (jqXHR, textStatus, errorThrown) {
         alert("poop");
     });    
 }
+
+// http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values
+function getUrlParams() { 
+    var urlParams;
+    var match,
+        pl     = /\+/g,  // Regex for replacing addition symbol with a space
+        search = /([^&=]+)=?([^&]*)/g,
+        decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+        query  = window.location.search.substring(1);
+
+    urlParams = {};
+    while (match = search.exec(query))
+       urlParams[decode(match[1])] = decode(match[2]);
+    return urlParams;
+}
+
 
 $(init);
 

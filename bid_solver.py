@@ -18,6 +18,14 @@ DUPE_POSTS = {
     'DC': 7
 }
 
+# the actual index ranges of dupe posts; used for forcing assignments
+DUPE_POST_RANGES = {
+    'Frankfurt': [3, 5],
+    'Montevideo': [8, 10],
+    'Moscow': [10, 12],
+    'DC': [13, 20]
+}
+
 POSTS = {'Abu Dhabi': 0, 
          'Canberra': 1,
          'Dakar': 2,
@@ -80,22 +88,29 @@ class BidSolver():
             return [post[:-1], base_rank]
         return [post, rank]
 
-    def get_assignments(self, rankings):
-        #print rankings
+    def get_assignments(self, rankings, forced={'Kennon':'London', 'DaveG':'Canberra'}):
+        #print '###1', rankings
 
         rankings = self.add_dupe_posts(rankings)
-        #print rankings
+        #print '###2', rankings
 
         errors = self.validate_rankings(rankings)
         if len(errors) != 0:
             print errors
             raise Exception(errors)
-        #print rankings
+        #print '###3', rankings
+
+        errors = self.validate_forced(forced)
+        if len(errors) != 0:
+            print errors
+            raise Exception(errors)
+        #print '###4', rankings
 
         names = []
         for name, ranking in rankings.items():
             names.append(name)
-            converted = [POSTS[post] for post in ranking]
+            # converts post names to their alphabetical index
+            converted = [POSTS[post] for post in ranking]                
             rankings[name] = converted
         #print rankings
 
@@ -105,10 +120,32 @@ class BidSolver():
         for name in names:
             name_map[count] = name
             count += 1
-        print name_map
+        print 'name_map:', name_map
 
         matrix = [self.flip_ranks(ranking) for ranking in rankings.itervalues()]
-        print matrix
+        print 'unforced matrix:', matrix
+
+        # assign very low cost values to force the algorithm to make certain
+        # assignments
+        reverse_name_map = dict((v,k) for k, v in name_map.iteritems())
+        
+        for forced_person, forced_post in forced.items():
+            # the forced person hasnt actually saved a bid list; make a fake one
+            if forced_person not in reverse_name_map:
+                name_map[count] = forced_person
+                reverse_name_map[forced_person] = count
+                matrix.append([0] * len(POSTS))
+                count += 1
+            person_index = reverse_name_map[forced_person]
+            # the forced post is a dupe one; assign a low cost to each dupe
+            if forced_post in DUPE_POST_RANGES:
+                dupe_post_range = DUPE_POST_RANGES[forced_post]
+                for i in range(dupe_post_range[0], dupe_post_range[1]):
+                    matrix[person_index][i] = -100
+            else:
+                post_index = POSTS[forced_post]
+                matrix[person_index][post_index] = -100
+        print 'matrix:', matrix
 
         m = Munkres()
         indexes = m.compute(matrix)
@@ -151,6 +188,11 @@ class BidSolver():
         if len(checklist) != 0:
             for k in checklist.iterkeys():
                 errors.append('{0} is missing post {1}'.format(name, k))
+        return errors
+
+    def validate_forced(self, forced):
+        '''TODO'''
+        errors = []
         return errors
 
     def flip_ranks(self, ranking):
