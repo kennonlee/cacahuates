@@ -189,6 +189,7 @@ function drawBidLists(rankings) {
  *
  */
 function drawGodMode(people, posts) {
+    people.sort();
     $.each(people, function (index, name) {
 	var str = '<label for="god-label-' + name + '">' + name + '</label>';
 	str += '<select id="god-select-' + name + '" name="' + name + '"/>';
