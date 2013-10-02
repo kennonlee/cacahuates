@@ -4,7 +4,7 @@ div {
     margin-bottom: 6px;
 }
 
-span.disclaimer {
+div.disclaimer {
     font-weight: bold;
     color: #d04040;
 }
@@ -17,6 +17,18 @@ span.disclaimer {
 
 .spinner {
     margin-left: 40px;
+}
+
+.godselect {
+    float: none;
+}
+
+.floatspacer {
+    clear:both;
+}
+
+li.forced {
+    color: #d04040;
 }
 
 .computebutton {

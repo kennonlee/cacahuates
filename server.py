@@ -4,6 +4,7 @@ import json
 
 from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 from os import curdir, sep
+from urlparse import urlparse, parse_qs
 
 from file_persister import FilePersister
 from bid_solver import BidSolver
@@ -15,31 +16,39 @@ PORT_NUMBER = 8080
 class myHandler(BaseHTTPRequestHandler):
     
     def do_GET(self):
-        if self.path == '/get_rankings':
+        print self.path
+        result = urlparse(self.path)
+        path = result.path
+        if path == '/get_rankings':
             self.get_rankings()
             return
-        if self.path == '/get_assignments':
-            self.get_assignments()
+        if path == '/get_assignments':
+            print 'result.query', result.query
+            params = parse_qs(result.query)
+            print 'params', params
+            forced = {k:v[0] for k, v in params.items()}
+            print forced
+            self.get_assignments(forced)
             return
 
-        if self.path == '/':
-            self.path = '/bids.html'
+        if path == '/':
+            path = '/bids.html'
 
         try:
-            self.send_file(self.path)
+            self.send_file(path)
         except IOError:
             self.send_error(404, 'File Not Found: {0}'.format(self.path))
 
     def send_file(self, path):
-        if self.path.endswith('.html'):
+        if path.endswith('.html'):
             mimetype = 'text/html'
-        elif self.path.endswith('.js'):
+        elif path.endswith('.js'):
             mimetype = 'application/javascript'
-        elif self.path.endswith('.css'):
+        elif path.endswith('.css'):
             mimetype = 'text/css'
-        elif self.path.endswith('.png'):
+        elif path.endswith('.png'):
             mimetype = 'image/png'
-        elif self.path.endswith('.gif'):
+        elif path.endswith('.gif'):
             mimetype = 'image/gif'
         else:
             raise IOError()
@@ -51,6 +60,7 @@ class myHandler(BaseHTTPRequestHandler):
         self.wfile.write(f.read())
         f.close()
 
+    # TODO: use urlparse!!
     def do_POST(self):
         ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
         if ctype == 'multipart/form-data':
@@ -62,7 +72,7 @@ class myHandler(BaseHTTPRequestHandler):
             postvars = {}
 
         if self.path == "/get_rankings":
-            self.get_assignments()
+            self.get_assignments(postvars)
         elif self.path == '/save':
             self.save(postvars)
 
@@ -75,13 +85,13 @@ class myHandler(BaseHTTPRequestHandler):
         #print rankings
         self.wfile.write(json.dumps(rankings))
 
-    def get_assignments(self):
+    def get_assignments(self, forced):
         rankings_persister = FilePersister('rankings.dat')
         rankings = rankings_persister.get_all()
         print rankings
 
         try: 
-            assignments = BidSolver().get_assignments(rankings) 
+            assignments = BidSolver().get_assignments(rankings, forced) 
             self.send_response(200)
             self.end_headers()
             self.wfile.write(json.dumps(assignments)) 
@@ -90,6 +100,7 @@ class myHandler(BaseHTTPRequestHandler):
             self.wfile.write(e)
             self.send_response(500)
             self.end_headers()
+#            raise
 
     def save(self, postvars):
         self.send_response(200)
