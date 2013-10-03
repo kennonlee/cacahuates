@@ -55,10 +55,11 @@ Your assignment will not appear until you have saved your bid list. Don't worry-
 </div>
 
 <div id="floatspacer" class="floatspacer">
+</div>
 
 <h2>God Mode</h2>
 
-    <div>Force assignments to whoever you want, then click Submit to run the assignment algorithm. If you try to force too many people to a given post (e.g., assigning 3 people to Moscow), then the algorithm will randomly choose from among the forced assignees.
+    <div>Force assignments to whoever you want-- even those who have not yet saved their bid lists. If you try to force too many people to a given post (e.g., assigning 3 people to Moscow), then the algorithm will randomly choose from among the forced assignees.
 
 <div></div>
 
@@ -190,16 +191,23 @@ function drawBidLists(rankings) {
  */
 function drawGodMode(people, posts) {
     people.sort();
+    var count = 0;
+    $('<table id="godtable"/>').appendTo($('#godform'));
+    $('<tr id="godtr" />').appendTo('#godtable');
     $.each(people, function (index, name) {
+	var rowcount = Math.floor(count / 5);
+	$('<td id="td-' + count + '"/>').appendTo('#godtr');
+
 	var str = '<label for="god-label-' + name + '">' + name + '</label>';
 	str += '<select id="god-select-' + name + '" name="' + name + '"/>';
-	$(str).addClass('godselect').appendTo($("#godform")).change(function (eventObj) {
+	$(str).addClass('godselect').appendTo($('#td-' + rowcount)).change(function (eventObj) {
 	    getAssignments($('#godform').serialize(), '#godassignments');
 	});
 	$('<option value="">---</option>').appendTo('#god-select-' + name);
 	$.each(posts, function(index, post) {
 	    $('<option value="' + post + '">' + post + '</option>').appendTo('#god-select-' + name);
 	});
+	count++;
     });
 }
 

@@ -40,6 +40,9 @@ class myHandler(BaseHTTPRequestHandler):
             self.send_error(404, 'File Not Found: {0}'.format(self.path))
 
     def send_file(self, path):
+        '''
+        Outputs a server-side file via http.
+        '''
         if path.endswith('.html'):
             mimetype = 'text/html'
         elif path.endswith('.js'):

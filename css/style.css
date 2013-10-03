@@ -31,6 +31,12 @@ li.forced {
     color: #d04040;
 }
 
+td {
+    width: 100px;
+    vertical-align: top;
+    text-align: right;
+}
+
 .computebutton {
     -moz-box-shadow:inset 0px 1px 0px 0px #bbdaf7;
     -webkit-box-shadow:inset 0px 1px 0px 0px #bbdaf7;
