@@ -16,18 +16,18 @@ PORT_NUMBER = 8080
 class myHandler(BaseHTTPRequestHandler):
     
     def do_GET(self):
-        print self.path
+#        print self.path
         result = urlparse(self.path)
         path = result.path
         if path == '/get_rankings':
             self.get_rankings()
             return
         if path == '/get_assignments':
-            print 'result.query', result.query
+#            print 'result.query', result.query
             params = parse_qs(result.query)
-            print 'params', params
+#            print 'params', params
             forced = {k:v[0] for k, v in params.items()}
-            print forced
+#            print forced
             self.get_assignments(forced)
             return
 

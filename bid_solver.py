@@ -123,7 +123,7 @@ class BidSolver():
         print 'name_map:', name_map
 
         matrix = [self.flip_ranks(ranking) for ranking in rankings.itervalues()]
-        print 'unforced matrix:', matrix
+#        print 'unforced matrix:', matrix
 
         # assign very low cost values to force the algorithm to make certain
         # assignments
