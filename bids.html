@@ -56,7 +56,7 @@ Your assignment will not appear until you have saved your bid list. Don't worry-
 
 <div id="floatspacer" class="floatspacer">
 
-<h1>God Mode</h1>
+<h2>God Mode</h2>
 
     <div>Force assignments to whoever you want, then click Submit to run the assignment algorithm. If you try to force too many people to a given post (e.g., assigning 3 people to Moscow), then the algorithm will randomly choose from among the forced assignees.
 
@@ -193,15 +193,13 @@ function drawGodMode(people, posts) {
     $.each(people, function (index, name) {
 	var str = '<label for="god-label-' + name + '">' + name + '</label>';
 	str += '<select id="god-select-' + name + '" name="' + name + '"/>';
-	$(str).addClass('godselect').appendTo($("#godform"));
+	$(str).addClass('godselect').appendTo($("#godform")).change(function (eventObj) {
+	    getAssignments($('#godform').serialize(), '#godassignments');
+	});
 	$('<option value="">---</option>').appendTo('#god-select-' + name);
 	$.each(posts, function(index, post) {
 	    $('<option value="' + post + '">' + post + '</option>').appendTo('#god-select-' + name);
 	});
-    });
-    $('<input type="submit"/>').appendTo('#godform').click(function() {
-	getAssignments($('#godform').serialize(), '#godassignments');
-	return false;
     });
 }
 
